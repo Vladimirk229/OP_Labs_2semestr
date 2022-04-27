@@ -1,0 +1,100 @@
+import keyboard
+
+#========Функция заполнения файла==========
+def FileFill(name):
+    text = ["Пункт назначения: ", "Время отправки: ", "Длительность поездки: "]
+    buf="a"
+    f=open(name, 'wb')
+    KeyboardCheck=keyboard.is_pressed("down")
+    while KeyboardCheck==False:#Цикл выполняется, пока не нажаты стрелка вниз и Enter одновременно
+        for i in range(3):
+            print(text[i], end='')
+            buf=input()
+            f.write(text[i].encode())
+            f.write(buf.encode())
+            f.write("; ".encode())
+        f.write('\n'.encode())
+        KeyboardCheck=keyboard.is_pressed("down")
+    f.close()
+
+#==========Функция вывода файла============
+def FilePrint(FileName):
+    f=open(FileName, 'rb')
+    s=f.read()#Чтение файла
+    print(s.decode())
+    f.close()
+
+#=====Функция раздела файла на строки======
+def FileSplit(FileName):
+    strings=[]
+    f=open(FileName, 'rb')
+    for line in f:#Цикл проверки каждой строки в файле
+        strings.append(line.decode())#Строка добавляется в список строк
+    f.close()
+    return(strings)
+
+#=======Функция изменения расписания и создания нового файла======
+def NewFile(Strings, FileName):
+    count=0
+    Hours1=0
+    Minutes1=0
+    Hours2=0
+    Minutes2=0
+    f=open(FileName, 'wb')
+    for j in range(len(Strings)):#Цикл проверяет каждую строку в списке
+        for k in range(len(Strings[j])):#Цикл проверки каждого символа в строке
+            if Strings[j][k]==':':#Код считывания времени
+                if count==0:
+                    count=1
+                elif count==1:#Вычисление часов времени отправки
+                    buf1=int(Strings[j][k+2])
+                    buf2=int(Strings[j][k+3])
+                    Hours1=(buf1*10)+buf2
+                    count=2
+                elif count==2:#Вычисление минут времени отправки
+                    buf1=int(Strings[j][k+1])
+                    buf2=int(Strings[j][k+2])
+                    Minutes1=(buf1*10)+buf2
+                    count=3
+                elif count==3:#Вычисление часов длительности поездки
+                    buf1=int(Strings[j][k+2])
+                    buf2=int(Strings[j][k+3])
+                    Hours2=(buf1*10)+buf2
+                    count=4
+                elif count==4:#Вычисление минут длительности поездки
+                    buf1=int(Strings[j][k+1])
+                    buf2=int(Strings[j][k+2])
+                    Minutes2=(buf1*10)+buf2
+                    count=5
+        if Hours2<17:#Проверка условий, при которых строку нужно удалить
+            bufHours=Hours1
+            bufMinutes=Minutes1
+            for l in range(Minutes2):
+                bufMinutes+=1
+                if bufMinutes==60:
+                    bufMinutes=0
+                    bufHours+=1
+            for l in range(Hours2):
+                bufHours+=1
+                if bufHours==24:
+                    bufHours=0
+                if bufHours>=23 or bufHours<6:
+                        Strings[j]=" "
+        if Strings[j]!=" ":
+            f.write(Strings[j].encode())#Запись строки в новый файл
+        count=0
+        Hours1=0
+        Minutes1=0
+        Hours2=0
+        Minutes2=0
+    f.close()
+
+#==========Основной код====================
+FileFill("Shedule.bin")
+print(' ')
+print("Содержимое файла:")
+FilePrint("Shedule.bin")
+strings=FileSplit("Shedule.bin")
+NewFile(strings, "Shedule2.bin")
+print("Изменённое расписание:")
+FilePrint("Shedule2.bin")
