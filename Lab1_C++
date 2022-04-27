@@ -1,0 +1,178 @@
+#include <iostream>
+#include <fstream>//Библиотека для работы с файлами
+#include <conio.h>//Библиотека для работы с консольным вводом и выводом
+
+using namespace std;
+
+struct BracketsCount
+{
+	unsigned int OpeningBrackets;
+	unsigned int ClosingBrackets;
+	unsigned int OpeningFigureBrackets;
+	unsigned int ClosingFigureBrackets;
+};
+
+//=======Функция ввода текста в файл================================================================
+void FileFill(string name)
+{
+	ofstream ofFile;//Создание объекта класса ofstream
+	unsigned int uniBuf = 0;
+	unsigned int uniBuf2 = 0;//Переменные с кодами клавиш
+	ofFile.open(name);//Открытие текстового файла
+	if (!ofFile.is_open())
+	{
+		cout << "Ошибка открытия файла" << endl;//Если при открытии файла произошла ошибка, выводится соответствующее сообщение
+	}
+	else//Если файл открыт, то ожидание ввода текста
+	{
+		do
+		{
+			uniBuf = _getch();//Ожидание нажатия любой клавиши
+			if (_kbhit())
+			{
+				if (uniBuf == 224)//Проверка, нажата ли стрелка вниз
+				{
+					uniBuf2 = _getch();
+				}
+			}
+
+			if (uniBuf != 13 && uniBuf != 224)
+			{//Условие выполняется, если не нажат Enter или стрелка вниз
+				ofFile << char(uniBuf);//Запись введённого символа в файл
+				cout << char(uniBuf);//Вывод символа
+			}
+			else
+			{
+				if (uniBuf == 13)//Если нажат Enter, то происходит переход на следующую строку
+				{
+					ofFile << endl;
+					cout << endl;
+				}
+			}
+
+		} while (uniBuf2 != 80);//Цикл выполняется, пока нет кода клавиши "Стрелка вниз"
+
+		cout << endl;
+		cout << "=========================" << endl;
+		ofFile.close();//Закрытие файла
+	}
+}
+
+//=======Функция, проверяющая количество скобок в файле и возвращающая результат в виде структуры===
+BracketsCount FileRead(string name)
+{
+	ifstream ifFile;//Создание объекта класса ifstream
+	char chBuf;//Буфер для считываемых символов
+	unsigned int uniCount1 = 0;//Счётчик открывающихся скобок
+	unsigned int uniCount2 = 0;//Счётчик закрывающихся скобок
+	unsigned int uniFCount1 = 0;//Счётчик открывающихся фигурных скобок
+	unsigned int uniFCount2 = 0;//Счётчик закрывающихся фигурных скобок
+	ifFile.open(name);//Открытие нужного файла
+	cout << "Содержимое файла:\n" << endl;
+	if (!ifFile.is_open())
+	{
+		cout << "Ошибка открытия файла" << endl;//Если при открытии файла произошла ошибка, выводится соответствующее сообщение
+	}
+	else
+	{
+		while (!ifFile.eof())//Цикл выполняется, пока не прочитан весь файл
+		{
+			chBuf = ifFile.get();//Получение символа из файла и запись его в буфер
+			if (!ifFile.eof())
+			{
+				cout << chBuf;//Вывод буфера с полученным символом
+			}
+
+			if (chBuf == '(')
+			{//Если найдена открывающаяся скобка, то соответствующий счётчик увеличивается на 1
+				uniCount1++;
+			}
+			else if (chBuf == ')')
+			{//Если найдена закрывающаяся скобка, то соответствующий счётчик увеличивается на 1
+				uniCount2++;
+			}
+			else if (chBuf == '{')
+			{//Если найдена открывающаяся фигурная скобка, то соответствующий счётчик увеличивается на 1
+				uniFCount1++;
+			}
+			else if (chBuf == '}')
+			{//Если найдена закрывающаяся фигурная скобка, то соответствующий счётчик увеличивается на 1
+				uniFCount2++;
+			}
+		}
+		cout << endl;
+		cout << endl;
+		BracketsCount bufResult;
+		bufResult.OpeningBrackets = uniCount1;
+		bufResult.ClosingBrackets = uniCount2;
+		bufResult.OpeningFigureBrackets = uniFCount1;
+		bufResult.ClosingFigureBrackets = uniFCount2;
+		return(bufResult);
+		ifFile.close();//Закрытие файла
+	}
+	
+}
+
+//=====Главная функция====
+int main()
+{
+	setlocale(LC_ALL, "Russian");
+
+	//=================Вывод инструкции===========================
+	cout << "Введите любой код на языке C++" << endl;
+	cout << "Для перехода на следующую строку нажмите Enter" << endl;
+	cout << "Если вы закончили писать код, нажмите клавишу с расширенным кодом-стрелку вниз" << endl;
+	cout << "=========================" << endl;
+	cout << "Ваш код:\n" << endl;
+
+	//================Ввод данных=================================
+	FileFill("Text.txt");
+	//=============Считывание информации из файла=====================
+	BracketsCount Result=FileRead("Text.txt");
+	if (Result.OpeningBrackets == Result.ClosingBrackets)//Условие выполняется, если оба счётчика равны
+	{
+		if (Result.OpeningBrackets != 0)
+		{
+			cout << "Количество скобок равно" << endl;
+		}
+		else
+		{
+			cout << "Скобки отсутствуют" << endl;
+		}
+	}
+	else //В противном случае, два счётчика не равны
+	{
+		if (Result.OpeningBrackets != 0 || Result.ClosingBrackets != 0)
+		{
+			cout << "Количество скобок не равно" << endl;
+		}
+		else
+		{
+			cout << "Скобки отсутствуют" << endl;
+		}
+	}
+	if (Result.OpeningFigureBrackets == Result.ClosingFigureBrackets)//Условие выполняется, если оба счётчика равны
+	{
+		if (Result.OpeningFigureBrackets != 0)
+		{
+			cout << "Количество фигурных скобок равно" << endl;
+		}
+		else
+		{
+			cout << "Фигурные скобки отсутствуют" << endl;
+		}
+	}
+	else //В противном случае, два счётчика не равны
+	{
+		if (Result.OpeningFigureBrackets != 0 || Result.ClosingFigureBrackets != 0)
+		{
+			cout << "Количество фигурных скобок не равно" << endl;
+		}
+		else
+		{
+			cout << "Фигурные скобки отсутствуют" << endl;
+		}
+	}
+	
+	
+}
