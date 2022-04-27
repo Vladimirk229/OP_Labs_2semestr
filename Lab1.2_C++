@@ -1,0 +1,228 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <conio.h>
+
+using namespace std;
+
+//===========Функция заполнения файла===============
+void FileFill(string FileName)
+{
+	string Text[3] = { "Пункт назначения: ", "Время отправки: ", "Длительность поездки: " };
+	ofstream outFile;
+	unsigned int uniBuf = 0;
+	unsigned int usiBuf2 = 0;
+	unsigned int i = 1;
+	outFile.open(FileName, ios::binary);
+	if (!outFile.is_open())//Проверка успешности открытия файла
+	{
+		cout << "Ошибка открытия файла" << endl;
+	}
+	else//Условие выполняется, если файл открыт
+	{
+		cout << Text[0];
+		outFile.write(Text[0].c_str(), Text[0].length());
+		do
+		{
+			uniBuf = _getch();
+			if (_kbhit())
+			{
+				if (uniBuf == 224)
+				{
+					usiBuf2 = _getch();
+				}
+			}
+			if (uniBuf != 224 && uniBuf != 13 && usiBuf2 != 80)
+			{
+				cout << char(uniBuf);
+				outFile.put(char(uniBuf));
+			}
+			else
+			{
+				if (uniBuf == 13)
+				{
+					if (i == 3)
+					{
+						cout << ';';
+						cout << endl;
+						outFile.put(';');
+						outFile.put('\n');
+						cout << Text[0];
+						outFile.write(Text[0].c_str(), Text[0].length());
+						i = 1;
+					}
+					else
+					{
+						cout << "; " << Text[i];
+						outFile.put(';');
+						outFile.put(' ');
+						outFile.write(Text[i].c_str(), Text[i].length());
+						i++;
+					}
+				}
+			}
+
+		} while (usiBuf2 != 80);
+		outFile.close();
+	}
+	cout << endl;
+}
+
+//========Функция вывода содержимого файла==========
+void FilePrint(string FileName)
+{
+	ifstream inFile;
+	inFile.open(FileName, ios::binary);
+	char ch;
+	if (!inFile.is_open())//Проверка, открыт ли файл
+	{
+		cout << "Ошибка открытия файла" << endl;
+	}
+	else//Условие выполняется, если файл открыт
+	{
+		while (inFile.get(ch))
+		{
+			cout << ch;
+		}
+	}
+	inFile.close();
+}
+
+//======Функция раздела текста файла на строки======
+int StringsFill(string FileName, string* StrPtr)
+{
+	ifstream inFile;
+	inFile.open(FileName, ios::binary);
+	char ch;
+	int i = 0;
+	while (inFile.get(ch))
+	{
+		StrPtr[i].push_back(ch);
+		if (ch == '\n')
+		{
+			i++;
+		}
+	}
+	return(i);
+}
+
+//==========Функция создания нового файла===========
+void FileChange(string OldFileName, string FileName)
+{
+	ofstream outFile2;
+	outFile2.open("SheduleNew.dat", ios::binary);
+	unsigned int usiHours1 = 0, usiMinutes1 = 0, usiHours2 = 0, usiMinutes2 = 0;
+	unsigned int usiColonCount = 0;
+	unsigned int usiBuf1, usiBuf2;
+	string Strings[10];
+	unsigned int usiStringCount = StringsFill(OldFileName, &Strings[0]);
+	// 
+	if (!outFile2.is_open())
+	{
+		cout << "Ошибка открытия файла" << endl;
+	}
+	else  // Если файл успешно открыт
+	{ 
+		//Цикл проверки каждой строки
+		for (int j = 0; j <= usiStringCount; j++)
+		{
+			for (int k = 0; k < Strings[j].size(); k++)//Цикл проверки одной строки
+			{
+				if (Strings[j][k] == ':')
+				{
+					switch (usiColonCount)
+					{
+					case(0):
+						usiColonCount = 1;
+						break;
+					case(1): //Вычисление часов времени отправки
+						usiBuf1 = Strings[j][k + 2] - '0';
+						usiBuf2 = Strings[j][k + 3] - '0';
+						usiHours1 = (usiBuf1 * 10) + usiBuf2;
+						usiColonCount = 2;
+						break;
+					case(2)://Вычисление минут времени отправки
+						usiBuf1 = Strings[j][k + 1] - '0';
+						usiBuf2 = Strings[j][k + 2] - '0';
+						usiMinutes1 = (usiBuf1 * 10) + usiBuf2;
+						usiColonCount = 3;
+						break;
+					case(3)://Вычисление часов времени поездки
+						usiBuf1 = Strings[j][k + 2] - '0';
+						usiBuf2 = Strings[j][k + 3] - '0';
+						usiHours2 = (usiBuf1 * 10) + usiBuf2;
+						usiColonCount = 4;
+						break;
+					case(4)://Вычисление минут времени поездки
+						usiBuf1 = Strings[j][k + 1] - '0';
+						usiBuf2 = Strings[j][k + 2] - '0';
+						usiMinutes2 = (usiBuf1 * 10) + usiBuf2;
+						usiColonCount = 5;
+						break;
+					default:
+						break;
+					}
+				}
+			}
+			//Проверка условий, при которых строку нужно удалить
+			if (usiHours2 < 17)
+			{
+				int bufHours = usiHours1;
+				int bufMinutes = usiMinutes1;
+				for (int l = 0; l < usiMinutes2; l++)
+				{
+					bufMinutes++;
+					if (bufMinutes == 60)
+					{
+						bufMinutes = 0;
+						bufHours++;
+					}
+				}
+				for (int l = 0; l < usiHours2; l++)
+				{
+					bufHours++;
+					if (bufHours == 24)
+					{
+						bufHours = 0;
+					}
+					if (bufHours >= 23 || bufHours < 6)
+					{
+						Strings[j] = " ";
+					}
+				}
+				if (usiHours1 >= 23 || usiHours1 < 6)
+				{
+					Strings[j] = " ";
+				}
+			}
+			if (Strings[j] != " ")
+			{
+				outFile2.write(Strings[j].c_str(), Strings[j].size());
+			}
+			usiColonCount = 0;
+			usiHours1 = 0;
+			usiHours2 = 0;
+			usiMinutes1 = 0;
+			usiMinutes2 = 0;
+		}
+		outFile2.close();
+	}
+}
+
+//================Главная функция===================
+int main()
+{
+	setlocale(LC_ALL, "Russian");
+	//===============Запись текста в файл========================================
+	string FileName = "Shedule.dat";
+	FileFill(FileName);
+	//===============Вывод файловых данных в консоль=============================
+	cout << "\nСодержимое файла:" << endl;
+	FilePrint(FileName);
+	cout << endl;
+	//===============Изменение расписания и его запись в новый файл==============
+	FileChange(FileName, "SheduleNew.dat");
+	//===============Вывод нового файла==========================================
+	cout << "\nСодержимое нового файла:" << endl;
+	FilePrint("SheduleNew.dat");
+}
