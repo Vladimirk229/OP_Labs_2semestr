@@ -1,0 +1,62 @@
+import keyboard
+
+#=======Функция записи текста в файл============================================
+def FileFill(name):
+    buf="a"
+    f=open(name, 'w')
+    KeyboardCheck=keyboard.is_pressed("down")
+    while KeyboardCheck==False:#Пока не нажат Enter и стрелка вниз, происходит ввод текста
+        buf=input()
+        KeyboardCheck=keyboard.is_pressed("down")#Проверка нажатия стрелки вниз
+        f.write(buf)
+        f.write('\n')
+    print('\n')
+    f.close()
+
+#=======Функция проверки количества скобок в тексте и вывода результата=========
+def FileCheck(text):
+    i=0
+    OpeningBrackets=0
+    ClosingBrackets=0
+    OpeningFigureBrackets=0
+    ClosingFigureBrackets=0
+    while i<len(text):#Код выполняется, пока счётчик меньше длины текста
+       #Если встречается одна из скобок, то соответствующий счётчик увеличивается на 1
+       if text[i]=='(':
+            OpeningBrackets=OpeningBrackets+1
+       if text[i]==')':
+            ClosingBrackets=ClosingBrackets+1
+       if text[i]=='{':
+            OpeningFigureBrackets=OpeningFigureBrackets+1
+       if text[i]=='}':
+            ClosingFigureBrackets=ClosingFigureBrackets+1
+       i=i+1
+    #Вывод количества каждых скобок
+    print("Открывающиеся скобки:")
+    print(OpeningBrackets)
+    print("Закрывающиеся скобки:")
+    print(ClosingBrackets)
+    print("Открывающиеся фигурные скобки:")
+    print(OpeningFigureBrackets)
+    print("Закрывающиеся фигурные скобки:")
+    print(ClosingFigureBrackets)
+    #Вывод результата (количество скобок равно или не равно)
+    if OpeningBrackets==ClosingBrackets:
+        print("Количество скобок равно")
+    else:
+        print("Количество скобок не равно")
+    if OpeningFigureBrackets==ClosingFigureBrackets:
+        print("Количество фигурных скобок равно")
+    else:
+        print("Количество фигурных скобок не равно")
+
+#=======Основной код============================================================
+print("Введите код. Нажмите стрелку вниз + Enter, чтобы закончить ввод.\n")
+FileFill('text.txt')#Вызов функции заполнения файла с указанием имени файла
+
+print("Созданный файл:\n")
+f=open('text.txt', 'r')#Открытие заполненного файла для чтения
+filetext=f.read()#Запись всего текста файла в отдельную переменную
+print(filetext)
+FileCheck(filetext)#Вызов функции проверки количества скобок в тексте и вывода результата
+f.close()
