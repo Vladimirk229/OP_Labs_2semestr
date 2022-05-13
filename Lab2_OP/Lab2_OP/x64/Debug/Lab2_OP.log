@@ -1,0 +1,6 @@
+﻿  Lab2_OP.cpp
+C:\Users\Puanson\source\repos\Lab2_OP\Lab2_OP\Lab2_OP.cpp(14,23): warning C4018: <: несоответствие типов со знаком и без знака
+  Source.cpp
+C:\Users\Puanson\source\repos\Lab2_OP\Lab2_OP\Source.cpp(34,23): warning C4018: <: несоответствие типов со знаком и без знака
+  Создание кода...
+  Lab2_OP.vcxproj -> C:\Users\Puanson\source\repos\Lab2_OP\x64\Debug\Lab2_OP.exe
