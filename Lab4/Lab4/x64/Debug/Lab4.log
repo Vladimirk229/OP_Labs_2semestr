@@ -1,0 +1,11 @@
+﻿  Lab4.cpp
+C:\Users\Puanson\source\repos\Lab4\Lab4\Lab4.cpp(6,15): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+  Source.cpp
+C:\Users\Puanson\source\repos\Lab4\Lab4\Source.cpp(63,14): warning C4244: инициализация: преобразование "double" в "int", возможна потеря данных
+C:\Users\Puanson\source\repos\Lab4\Lab4\Source.cpp(70,14): warning C4244: инициализация: преобразование "double" в "int", возможна потеря данных
+C:\Users\Puanson\source\repos\Lab4\Lab4\Source.cpp(77,23): warning C4244: =: преобразование "double" в "int", возможна потеря данных
+C:\Users\Puanson\source\repos\Lab4\Lab4\Source.cpp(78,23): warning C4244: =: преобразование "double" в "int", возможна потеря данных
+C:\Users\Puanson\source\repos\Lab4\Lab4\Source.cpp(84,23): warning C4244: =: преобразование "double" в "int", возможна потеря данных
+C:\Users\Puanson\source\repos\Lab4\Lab4\Source.cpp(85,23): warning C4244: =: преобразование "double" в "int", возможна потеря данных
+  Создание кода...
+  Lab4.vcxproj -> C:\Users\Puanson\source\repos\Lab4\x64\Debug\Lab4.exe
