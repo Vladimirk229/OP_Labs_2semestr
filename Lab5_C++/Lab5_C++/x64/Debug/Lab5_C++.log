@@ -1,0 +1,5 @@
+﻿  Lab5_C++.cpp
+  Source.cpp
+  Создание кода...
+C:\Users\Puanson\source\repos\Lab5_C++\Lab5_C++\Source.cpp(35): warning C4715: addnode: значение возвращается не при всех путях выполнения
+  Lab5_C++.vcxproj -> C:\Users\Puanson\source\repos\Lab5_C++\x64\Debug\Lab5_C++.exe
